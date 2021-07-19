@@ -1,0 +1,17 @@
+---
+- name: Install Rubrik
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Download File
+      win_get_url:
+        url: https://{{host_ip}}/connector/RubrikBackupService.zip
+        dest: C:\\Windows\\Temp\\
+    - name: Unzip file
+      win_unzip:
+        src: C:\Windows\Temp\RubrikBackupService.zip
+        dest: C:\Windows\Temp\Rubrik
+    - name: Execute PS Script
+      ansible.windows.win_powershell:
+        script: |
+          msiexec.exe /i "C:\Windows\Temp\Rubrik\RubrikBackupService.msi" /qn
