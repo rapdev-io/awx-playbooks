@@ -2,6 +2,8 @@
 - name: Install DataDog
   hosts: all
   gather_facts: false
+  pre_tasks:
+    - include_vars: variables.yml
   tasks:
     - name: Download File
       win_get_url:
