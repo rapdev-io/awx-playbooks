@@ -5,7 +5,7 @@
   tasks:
     - name: Download File
       win_get_url:
-        url: https://{{host_ip}}/connector/RubrikBackupService.zip
+        url: https://files.rapdev.io/servicenow/RubrikBackupService.zip
         dest: C:\\Windows\\Temp\\
     - name: Unzip file
       win_unzip:
