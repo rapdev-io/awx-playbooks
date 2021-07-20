@@ -15,3 +15,7 @@
       ansible.windows.win_powershell:
         script: |
           msiexec.exe /i "C:\Windows\Temp\Rubrik\RubrikBackupService.msi" /qn
+    - name: Cleanup Files
+      ansible.windows.win_powershell:
+        script: |
+           Remove-Item C:\Windows\Temp\RubrikBackupService.zip
