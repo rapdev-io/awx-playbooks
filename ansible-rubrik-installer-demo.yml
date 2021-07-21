@@ -13,7 +13,7 @@
         src: C:\Windows\Temp\RubrikBackupService.zip
         dest: C:\Windows\Temp\Rubrik
         
-    - name: Execute PS Script
+    - name: Install .msi
       ansible.windows.win_powershell:
         script: |
           msiexec.exe /i "C:\Windows\Temp\Rubrik\RubrikBackupService.msi" /qn
