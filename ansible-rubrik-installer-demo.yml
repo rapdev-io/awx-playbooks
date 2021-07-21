@@ -7,25 +7,48 @@
       win_get_url:
         url: https://files.rapdev.io/servicenow/RubrikBackupService.zip
         dest: C:\\Windows\\Temp\\
+        
     - name: Unzip file
       win_unzip:
         src: C:\Windows\Temp\RubrikBackupService.zip
         dest: C:\Windows\Temp\Rubrik
+        
     - name: Execute PS Script
       ansible.windows.win_powershell:
         script: |
           msiexec.exe /i "C:\Windows\Temp\Rubrik\RubrikBackupService.msi" /qn
+          
     - name: Cleanup Files
       ansible.windows.win_powershell:
         script: |
            Remove-Item C:\Windows\Temp\RubrikBackupService.zip
+           
     - name: Verify User Account
       ansible.windows.win_user:
         name: "{{ sql_user }}"
         state: present
         update_password: on_create
         password: "{{ sql_password }}"
+        
     - name: Add User to Admin Group
       ansible.windows.win_powershell:
         script: |
           Add-LocalGroupMember -Group "Administrators" -Member "{{ sql_user }}"
+           
+    - name: Add Account to Log on as Service
+      ansible.windows.win_user_right:
+        name: SeServiceLogonRight
+        users: "{{ sql_user }}"
+        action: add
+        
+    - name: Stop Service
+      ansible.windows.win_powershell:
+        script: |
+           stop-service 'Rubrik Backup Service' -Force
+        
+    - name: Start Service with SA
+      ansible.windows.win_service:
+        name: 'Rubrik Backup service'
+        state: started
+        username: "{{ sql_user }}"
+        password: "{{ sql_password }}"
