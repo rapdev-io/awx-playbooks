@@ -23,17 +23,24 @@
         script: |
            Remove-Item C:\Windows\Temp\RubrikBackupService.zip
            
-    - name: Verify User Account
+    - name: Verify SQL User Account
       ansible.windows.win_user:
         name: "{{ sql_user }}"
         state: present
         update_password: on_create
         password: "{{ sql_password }}"
         
-    - name: Add User to Admin Group
+    - name: Add SQL User to Admin Group
       ansible.windows.win_powershell:
         script: |
           Add-LocalGroupMember -Group "Administrators" -Member "{{ sql_user }}"
+          
+    - name: Grant SA privileges to SQL User
+      mysql_user:
+        user: "{{ sql_user }}"
+        password: "{{ sql_password }}"
+        state: present
+        priv: 'somedatabase.*:ALL/someotherdatabase.*:ALL/*.*:SUPER,RELOAD,SHOW DATABASES'
            
     - name: Add Account to Log on as Service
       ansible.windows.win_user_right:
