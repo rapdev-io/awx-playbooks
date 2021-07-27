@@ -23,7 +23,7 @@
         script: |
            Remove-Item C:\Windows\Temp\RubrikBackupService.zip
            
-    - name: Verify Rubrik Windows User
+    - name: Verify/Add Rubrik Windows User
       ansible.windows.win_user:
         name: "{{ sql_user }}"
         state: present
@@ -35,7 +35,7 @@
         script: |
           Add-LocalGroupMember -Group "Administrators" -Member "{{ sql_user }}"
            
-    - name: Add Rubrik Windows User to Log on as Service
+    - name: "Give Rubrik Windows User 'Log on as Service' Rights"
       ansible.windows.win_user_right:
         name: SeServiceLogonRight
         users: "{{ sql_user }}"
@@ -60,7 +60,7 @@
         script: |
            stop-service 'Rubrik Backup Service' -Force
         
-    - name: Start Service with SA
+    - name: Start Service with Rubrik SA
       ansible.windows.win_service:
         name: 'Rubrik Backup service'
         state: started
